@@ -34,6 +34,10 @@ private:
 class State
 {
 public:
+	State(std::initializer_list<Behavior> behaviors)
+	:behavior_(behaviors.begin(), behaviors.end())
+	{
+	}
 	void addBehavior(Behavior behavior) {
 		behavior_.push_back(behavior);
 	}
@@ -51,14 +55,18 @@ class Component
 {
 public:
 	void addState(StateIdType identifier, State state) {
-		state_[identifier] = state;
+		state_.insert(make_pair(identifier, state));
 		if(current_state_id_ == INVALID) {
 			current_state_id_ = identifier;
 		}
 	}
 	void update() {
 		if(current_state_id_ == INVALID) return;
-		auto next_state_id = state_[current_state_id_].update();
+		auto found = state_.find(current_state_id_);
+		if(found == std::end(state_)) {
+			return;
+		}
+		auto next_state_id = found->second.update();
 		if(next_state_id != NO_CHANGE) {
 			auto found = state_.find(next_state_id);
 			current_state_id_ = (found != std::end(state_) ? found->first : INVALID);

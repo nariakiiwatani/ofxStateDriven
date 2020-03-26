@@ -12,13 +12,7 @@ void ofApp::setup(){
 	b2c.setup([this](){return key_=='4';},[=](){ofLog()<<"b2c";return c_id;});
 	c2a.setup([this](){return key_=='5';},[=](){ofLog()<<"c2a";return a_id;});
 	c2b.setup([this](){return key_=='6';},[=](){ofLog()<<"c2b";return b_id;});
-	State a,b,c;
-	a.addBehavior(a2b);
-	a.addBehavior(a2c);
-	b.addBehavior(b2a);
-	b.addBehavior(b2c);
-	c.addBehavior(c2a);
-	c.addBehavior(c2b);
+	State a{a2b,a2c},b{b2a,b2c},c{c2a,c2b};
 	comp.addState(a_id,a);
 	comp.addState(b_id,b);
 	comp.addState(c_id,c);

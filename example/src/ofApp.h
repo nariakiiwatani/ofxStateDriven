@@ -23,5 +23,5 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 private:
-	int key_ = 0;
+	int key_ = 0, prev_key_ = 0;
 };

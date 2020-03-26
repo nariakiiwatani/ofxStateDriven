@@ -99,14 +99,34 @@ public:
 		if(found == std::end(state_)) {
 			return;
 		}
-		auto next_state_id = found->second.update();
-		if(next_state_id != StateID<StateIdType>::NO_CHANGE()) {
-			auto found = state_.find(next_state_id);
-			current_state_id_ = (found != std::end(state_) ? found->first : StateID<StateIdType>::INVALID());
+		auto from_id = current_state_id_;
+		auto callback = callback_[from_id];
+		callback.before_update();
+		auto next_id = found->second.update();
+		callback.after_update();
+		if(next_id != StateID<StateIdType>::NO_CHANGE()) {
+			auto found = state_.find(next_id);
+			if(found == std::end(state_)) {
+				return;
+			}
+			callback.leave_to(next_id);
+			current_state_id_ = next_id;
+			callback_[next_id].enter_from(from_id);
 		}
 	}
+	void setBeforeUpdateCallback(StateIdType identifier, std::function<void()> callback) { callback_[identifier].before_update = callback; }
+	void setAfterUpdateCallback(StateIdType identifier, std::function<void()> callback) { callback_[identifier].after_update = callback; }
+	void setEnterStateCallback(StateIdType identifier, std::function<void(StateIdType)> callback) { callback_[identifier].enter_from = callback; }
+	void setLeaveStateCallback(StateIdType identifier, std::function<void(StateIdType)> callback) { callback_[identifier].leave_to = callback; }
 protected:
 	std::map<StateIdType, StateType> state_;
 	StateIdType current_state_id_=StateID<StateIdType>::INVALID();
+	struct Callback {
+		std::function<void()> before_update=[]{};
+		std::function<void()> after_update=[]{};
+		std::function<void(StateIdType)> enter_from=[](StateIdType){};
+		std::function<void(StateIdType)> leave_to=[](StateIdType){};
+	};
+	std::map<StateIdType, Callback> callback_;
 };
 }

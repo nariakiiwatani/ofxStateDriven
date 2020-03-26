@@ -47,6 +47,15 @@ void ofApp::setup(){
 			}
 		}
 	};
+	comp.setEnterStateCallback(a_id, [](StateIdType from_id) {
+		ofLog() << "from " << from_id << " to a";
+	});
+	comp.setBeforeUpdateCallback(b_id, []() {
+		ofLog() << "now in b";
+	});
+	comp.setLeaveStateCallback(b_id, [](StateIdType to_id) {
+		ofLog() << "leave b to " << to_id;
+	});
 }
 
 //--------------------------------------------------------------

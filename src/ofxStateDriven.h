@@ -35,18 +35,9 @@ public:
 	,action_(action)
 	{
 	}
-	bool check() {
-		return condition_();
-	}
-	StateIdType force() {
-		return action_();
-	}
-	StateIdType run() {
-		if(!check()) {
-			return StateID<StateIdType>::NO_CHANGE();
-		}
-		return force();
-	}
+	inline bool check() { return condition_(); }
+	inline StateIdType force() { return action_(); }
+	inline StateIdType run() { return check() ? force() : StateID<StateIdType>::NO_CHANGE(); }
 private:
 	std::function<bool()> condition_;
 	std::function<StateIdType()> action_;
@@ -62,9 +53,7 @@ public:
 	:behavior_(behaviors.begin(), behaviors.end())
 	{
 	}
-	void addBehavior(BehaviorType behavior) {
-		behavior_.push_back(behavior);
-	}
+	inline void addBehavior(BehaviorType behavior) { behavior_.push_back(behavior); }
 	StateIdType update() {
 		for(auto &&b : behavior_) {
 			auto next_state_id = b.run();

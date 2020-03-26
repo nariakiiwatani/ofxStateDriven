@@ -4,14 +4,14 @@ using namespace ofxStateDriven;
 ofxStateDriven::Component comp;
 //--------------------------------------------------------------
 void ofApp::setup(){
-	Behavior a2b, a2c, b2a, b2c, c2a, c2b;
 	StateIdType a_id=1,b_id=2,c_id=3;
-	a2b.setup([this](){return key_=='1';},[=](){ofLog()<<"a2b";return b_id;});
-	a2c.setup([this](){return key_=='2';},[=](){ofLog()<<"a2c";return c_id;});
-	b2a.setup([this](){return key_=='3';},[=](){ofLog()<<"b2a";return a_id;});
-	b2c.setup([this](){return key_=='4';},[=](){ofLog()<<"b2c";return c_id;});
-	c2a.setup([this](){return key_=='5';},[=](){ofLog()<<"c2a";return a_id;});
-	c2b.setup([this](){return key_=='6';},[=](){ofLog()<<"c2b";return b_id;});
+	Behavior
+	a2b([this](){return key_=='1';},[=](){ofLog()<<"a2b";return b_id;}),
+	a2c([this](){return key_=='2';},[=](){ofLog()<<"a2c";return c_id;}),
+	b2a([this](){return key_=='3';},[=](){ofLog()<<"b2a";return a_id;}),
+	b2c([this](){return key_=='4';},[=](){ofLog()<<"b2c";return c_id;}),
+	c2a([this](){return key_=='5';},[=](){ofLog()<<"c2a";return a_id;}),
+	c2b([this](){return key_=='6';},[=](){ofLog()<<"c2b";return b_id;});
 	State a{a2b,a2c},b{b2a,b2c},c{c2a,c2b};
 	comp.addState(a_id,a);
 	comp.addState(b_id,b);

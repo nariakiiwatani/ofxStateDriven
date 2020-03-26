@@ -11,9 +11,10 @@ namespace {
 class Behavior
 {
 public:
-	void setup(std::function<bool()> condition, std::function<StateIdType()> action) {
-		condition_ = condition;
-		action_ = action;
+	Behavior(std::function<bool()> condition, std::function<StateIdType()> action)
+	:condition_(condition)
+	,action_(action)
+	{
 	}
 	bool check() {
 		return condition_();

@@ -29,6 +29,7 @@ template<typename StateIdType=std::size_t>
 class Behavior
 {
 public:
+	Behavior()=default;
 	Behavior(std::function<bool()> condition, std::function<StateIdType()> action)
 	:condition_(condition)
 	,action_(action)
@@ -56,6 +57,7 @@ class State
 {
 using BehaviorType = Behavior<StateIdType>;
 public:
+	State()=default;
 	State(std::initializer_list<BehaviorType> behaviors)
 	:behavior_(behaviors.begin(), behaviors.end())
 	{
@@ -79,6 +81,12 @@ class Component
 {
 using StateType = State<StateIdType>;
 public:
+	Component()=default;
+	Component(std::initializer_list<std::pair<StateIdType, StateType>> init)
+	:state_(init.begin(), init.end())
+	,current_state_id_(state_.begin()->first)
+	{
+	}
 	void addState(StateIdType identifier, StateType state) {
 		state_.insert(make_pair(identifier, state));
 		if(current_state_id_ == StateID<StateIdType>::INVALID()) {

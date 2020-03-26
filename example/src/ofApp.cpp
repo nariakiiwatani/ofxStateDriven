@@ -6,35 +6,47 @@ ofxStateDriven::Component<StateIdType> comp;
 //--------------------------------------------------------------
 void ofApp::setup(){
 	StateIdType a_id="a",b_id="b",c_id="c";
-	Behavior<StateIdType>
-	a2b(
-		Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='2';}),
-		[=](){ofLog()<<"a2b";return b_id;}
-	),
-	a2c(
-		Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='3';}),
-		[=](){ofLog()<<"a2c";return c_id;}
-	),
-	b2a(
-		Condition([this](){return prev_key_=='2';}) && Condition([this](){return key_=='1';}),
-		[=](){ofLog()<<"b2a";return a_id;}
-	),
-	b2c(
-		Condition([this](){return prev_key_=='2';}) && Condition([this](){return key_=='3';}),
-		[=](){ofLog()<<"b2c";return c_id;}
-	),
-	c2a(
-		Condition([this](){return prev_key_=='3';}) && Condition([this](){return key_=='1';}),
-		[=](){ofLog()<<"c2a";return a_id;}
-	),
-	c2b(
-		Condition([this](){return prev_key_=='3';}) && Condition([this](){return key_=='2';}),
-		[=](){ofLog()<<"c2b";return b_id;}
-	);
-	State<StateIdType> a{a2b,a2c},b{b2a,b2c},c{c2a,c2b};
-	comp.addState(a_id,a);
-	comp.addState(b_id,b);
-	comp.addState(c_id,c);
+	comp = Component<StateIdType> {
+		{
+			a_id,
+			{
+				{
+					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='2';}),
+					[=](){ofLog()<<"a2b";return b_id;}
+				},
+				{
+					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='3';}),
+					[=](){ofLog()<<"a2c";return c_id;}
+				}
+			}
+		},
+		{
+			b_id,
+			{
+				{
+					Condition([this](){return prev_key_=='2';}) && Condition([this](){return key_=='1';}),
+					[=](){ofLog()<<"b2a";return a_id;}
+				},
+				{
+					Condition([this](){return prev_key_=='2';}) && Condition([this](){return key_=='3';}),
+					[=](){ofLog()<<"b2c";return c_id;}
+				}
+			}
+		},
+		{
+			c_id,
+			{
+				{
+					Condition([this](){return prev_key_=='3';}) && Condition([this](){return key_=='1';}),
+					[=](){ofLog()<<"c2a";return a_id;}
+				},
+				{
+					Condition([this](){return prev_key_=='3';}) && Condition([this](){return key_=='2';}),
+					[=](){ofLog()<<"c2b";return b_id;}
+				}
+			}
+		}
+	};
 }
 
 //--------------------------------------------------------------

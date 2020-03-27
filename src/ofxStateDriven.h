@@ -30,17 +30,30 @@ class Behavior
 {
 public:
 	Behavior()=default;
-	Behavior(std::function<bool()> condition, std::function<StateIdType()> action)
+	template<typename Action>
+	Behavior(std::function<bool()> condition, Action &&action)
 	:condition_(condition)
-	,action_(action)
-	{
-	}
+	,action_(wrapper<decltype(declval<Action>()())>::wrap(action))
+	{}
 	inline bool check() { return condition_(); }
 	inline StateIdType force() { return action_(); }
 	inline StateIdType run() { return check() ? force() : StateID<StateIdType>::NO_CHANGE(); }
 private:
 	std::function<bool()> condition_;
 	std::function<StateIdType()> action_;
+
+	template<typename F>
+	struct wrapper {
+		static std::function<StateIdType()> wrap(std::function<F()> f) {
+			return [f]{f();return StateID<StateIdType>::NO_CHANGE();};
+		}
+	};
+	template<>
+	struct wrapper<StateIdType> {
+		static std::function<StateIdType()> wrap(std::function<StateIdType()> f) {
+			return f;
+		}
+	};
 };
 
 template<typename StateIdType=std::size_t>

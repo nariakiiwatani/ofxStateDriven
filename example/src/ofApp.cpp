@@ -12,7 +12,7 @@ void ofApp::setup(){
 			{
 				{
 					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='2';}),
-					[=](){ofLog()<<"a2b";return b_id;}
+					[](){}
 				},
 				{
 					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='3';}),

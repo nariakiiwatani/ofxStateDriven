@@ -15,8 +15,13 @@ void ofApp::setup(){
 					[](){}
 				},
 				{
-					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='3';}),
-					[=](){ofLog()<<"a2c";return "c";}
+					[=]{
+						if(prev_key_=='1' && key_=='3') {
+							ofLog()<<"a2c";
+							return c_id;
+						}
+						return StateID<StateIdType>::NO_CHANGE();
+					}
 				}
 			}
 		},

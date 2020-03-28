@@ -30,10 +30,17 @@ class Behavior
 {
 public:
 	Behavior()=default;
+	Behavior(const Behavior&)=default;
+	Behavior(Behavior&)=default;
+	Behavior(Behavior&&)=default;
 	template<typename Action>
 	Behavior(std::function<bool()> condition, Action &&action)
 	:condition_(condition)
 	,action_(wrapper<decltype(declval<Action>()())>::wrap(action))
+	{}
+	template<typename Action>
+	Behavior(Action &&action)
+	:Behavior([]{return true;}, action)
 	{}
 	inline bool check() { return condition_(); }
 	inline StateIdType force() { return action_(); }

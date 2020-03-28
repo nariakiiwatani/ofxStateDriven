@@ -16,7 +16,7 @@ void ofApp::setup(){
 				},
 				{
 					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='3';}),
-					[=](){ofLog()<<"a2c";return c_id;}
+					[=](){ofLog()<<"a2c";return "c";}
 				}
 			}
 		},

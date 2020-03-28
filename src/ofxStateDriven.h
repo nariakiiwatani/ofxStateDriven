@@ -42,15 +42,15 @@ private:
 	std::function<bool()> condition_;
 	std::function<StateIdType()> action_;
 
-	template<typename F>
+	template<typename T, typename SFINAE=void>
 	struct wrapper {
-		static std::function<StateIdType()> wrap(std::function<F()> f) {
+		static std::function<StateIdType()> wrap(std::function<T()> f) {
 			return [f]{f();return StateID<StateIdType>::NO_CHANGE();};
 		}
 	};
-	template<>
-	struct wrapper<StateIdType> {
-		static std::function<StateIdType()> wrap(std::function<StateIdType()> f) {
+	template<typename T>
+	struct wrapper<T, typename std::enable_if<std::is_convertible<T, StateIdType>::value>::type> {
+		static std::function<StateIdType()> wrap(std::function<T()> f) {
 			return f;
 		}
 	};

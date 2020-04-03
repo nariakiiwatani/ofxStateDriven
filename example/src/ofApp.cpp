@@ -1,65 +1,104 @@
 #include "ofApp.h"
 
+// for convenience
 using namespace ofxStateDriven;
+// you can use any type as state ID unless it can used as key_type of std::unordered_map
 using StateIdType = std::string;
+// Component is a type that has multiple states.
 ofxStateDriven::Component<StateIdType> comp;
 //--------------------------------------------------------------
 void ofApp::setup(){
+	// state IDs
 	StateIdType a_id="a",b_id="b",c_id="c";
+	// you can describe everything in constructor. 
 	comp = Component<StateIdType> {
 		{
+			// here we code what to do while the state is "a"
 			a_id,
 			{
+				// in a state, you can set one or more behaviors.
+				// behaviors are defined as a pair of "Condition" and "Action"
+				// they are checked in order.
 				{
-					Condition([this](){return prev_key_=='1';}) && Condition([this](){return key_=='2';}),
-					[](){}
-				},
-				{
+					// if the condition was true, the action goes.
+					[this]{return key_=='b';},
+					// if the action returned StateIdType, the state changes and following behaviors are skipped.
 					[=]{
-						if(prev_key_=='1' && key_=='3') {
-							ofLog()<<"a2c";
-							return c_id;
-						}
-						return StateID<StateIdType>::NO_CHANGE();
+						ofLog() << "move from a to b";
+						return b_id;
+					}
+				},
+				// here is the second behavior.
+				{
+					[this]{return key_=='c';},
+					// if the action returned nothing (or anything that is not convertible to StateIdType)
+					// the action is executed but the state will not changes.
+					// so latter behaviors will run as usual.
+					[this]{
+						ofLog() << "tryed to move from a to c but it's not implemented";
+						key_ = 0;
 					}
 				}
 			}
 		},
 		{
+			// when the state is "b"
 			b_id,
 			{
 				{
-					Condition([this](){return prev_key_=='2';}) && Condition([this](){return key_=='1';}),
-					[=](){ofLog()<<"b2a";return a_id;}
+					// you can combine conditions using "||" or "&&" by wrapping each in ofxStateDriven::Condition
+					Condition([this]{return key_=='a';}) || Condition([this]{return key_==OF_KEY_LEFT;}),
+					[=]{
+						ofLog() << "move from b to a";
+						return a_id;
+					}
 				},
 				{
-					Condition([this](){return prev_key_=='2';}) && Condition([this](){return key_=='3';}),
-					[=](){ofLog()<<"b2c";return c_id;}
+					// yes of course you can do this. I know.
+					[this]{return key_=='c' || key_==OF_KEY_RIGHT;},
+					[]{
+						ofLog() << "move from b to c";
+						// "c" is not a string (it's actually const char[1])
+						// but it is convertible to StateIdType(std::string in this example) so you can do this to move to state "c".
+						return "c";
+					}
 				}
 			}
 		},
 		{
+			// state c
 			c_id,
 			{
 				{
-					Condition([this](){return prev_key_=='3';}) && Condition([this](){return key_=='1';}),
-					[=](){ofLog()<<"c2a";return a_id;}
-				},
-				{
-					Condition([this](){return prev_key_=='3';}) && Condition([this](){return key_=='2';}),
-					[=](){ofLog()<<"c2b";return b_id;}
+					// you can define behaviors by only action.
+					[=]{
+						if(key_=='a') {
+							ofLog() << "move from c to a";
+							return a_id;
+						}
+						if(key_=='b') {
+							ofLog() << "move from c to b";
+							return b_id;
+						}
+						// return this special ID to stay in current state.
+						return StateID<StateIdType>::NO_CHANGE();
+					}
 				}
 			}
 		}
 	};
+	// you can set these callbacks for each state.
 	comp.setEnterStateCallback(a_id, [](StateIdType from_id) {
-		ofLog() << "from " << from_id << " to a";
-	});
-	comp.setBeforeUpdateCallback(b_id, []() {
-		ofLog() << "now in b";
+		ofLog() << "enter a from " << from_id;
 	});
 	comp.setLeaveStateCallback(b_id, [](StateIdType to_id) {
 		ofLog() << "leave b to " << to_id;
+	});
+	comp.setBeforeUpdateCallback(b_id, []() {
+		ofLog() << "before update in b";
+	});
+	comp.setAfterUpdateCallback(b_id, []() {
+		ofLog() << "after update in b";
 	});
 }
 
@@ -75,56 +114,5 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	prev_key_ = key_;
 	key_ = key;
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
 }

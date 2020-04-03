@@ -1,3 +1,3 @@
 # ofxStateDriven
 
-Just Proof-of-Concept yet
+see `example/src/ofApp.cpp` to know how to use.

@@ -25,7 +25,7 @@ public:
 protected:
 	std::function<bool()> condition_;
 };
-template<typename StateIdType=std::size_t>
+template<typename StateIdType>
 class Behavior
 {
 public:
@@ -63,7 +63,7 @@ private:
 	};
 };
 
-template<typename StateIdType=std::size_t>
+template<typename StateIdType>
 class State
 {
 using BehaviorType = Behavior<StateIdType>;
@@ -85,7 +85,7 @@ protected:
 	std::vector<BehaviorType> behavior_;
 };
 
-template<typename StateIdType=std::size_t>
+template<typename StateIdType>
 class Component
 {
 using StateType = State<StateIdType>;

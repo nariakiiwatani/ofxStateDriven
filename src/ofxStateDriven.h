@@ -1,5 +1,12 @@
 #pragma once
 
+#include <functional>
+#include <type_traits>
+#include <initializer_list>
+#include <unordered_map>
+#include <vector>
+#include <utility>
+
 namespace ofxStateDriven {
 
 template<typename ValueType>

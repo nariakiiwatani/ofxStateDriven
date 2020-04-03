@@ -93,7 +93,7 @@ public:
 	Component()=default;
 	Component(std::initializer_list<std::pair<StateIdType, StateType>> init)
 	:state_(init.begin(), init.end())
-	,current_state_id_(state_.begin()->first)
+	,current_state_id_(init.begin()->first)
 	{
 	}
 	void addState(StateIdType identifier, StateType state) {
@@ -128,7 +128,7 @@ public:
 	void setEnterStateCallback(StateIdType identifier, std::function<void(StateIdType)> callback) { callback_[identifier].enter_from = callback; }
 	void setLeaveStateCallback(StateIdType identifier, std::function<void(StateIdType)> callback) { callback_[identifier].leave_to = callback; }
 protected:
-	std::map<StateIdType, StateType> state_;
+	std::unordered_map<StateIdType, StateType> state_;
 	StateIdType current_state_id_=StateID<StateIdType>::INVALID();
 	struct Callback {
 		std::function<void()> before_update=[]{};
@@ -136,6 +136,6 @@ protected:
 		std::function<void(StateIdType)> enter_from=[](StateIdType){};
 		std::function<void(StateIdType)> leave_to=[](StateIdType){};
 	};
-	std::map<StateIdType, Callback> callback_;
+	std::unordered_map<StateIdType, Callback> callback_;
 };
 }

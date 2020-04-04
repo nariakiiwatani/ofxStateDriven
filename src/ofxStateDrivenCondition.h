@@ -12,4 +12,15 @@ public:
 		return ++counter >= limit;
 	}){};
 };
+template<typename CounterType>
+using Increment = Counter<CounterType>;
+template<typename CounterType>
+class Decrement : public Condition
+{
+public:
+	Decrement(CounterType &counter, CounterType limit)
+	:Condition([&counter,limit] {
+		return --counter <= limit;
+	}){};
+};
 }

@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ofxStateDrivenCondition.h"
 
 // for convenience
 using namespace ofxStateDriven;
@@ -83,6 +84,11 @@ void ofApp::setup(){
 						// return this special ID to stay in current state.
 						return StateID<StateIdType>::NO_CHANGE();
 					}
+				},
+				{
+					// there are some pre-defined conditions (of course you can make your own)
+					Counter<int>(key_, 200),
+					[]{return "a";}
 				}
 			}
 		}

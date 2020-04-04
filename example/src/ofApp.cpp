@@ -18,22 +18,21 @@ void ofApp::setup(){
 			a_id,
 			{
 				// in a state, you can set one or more behaviors.
-				// behaviors are defined as a pair of "Condition" and "Action"
-				// they are checked in order.
+				// they are checked in order of addition.
+				// a behavior is defined as a pair of "Condition" and "Action"
 				{
 					// if the condition was true, the action goes.
 					[this]{return key_=='b';},
-					// if the action returned StateIdType, the state changes and following behaviors are skipped.
-					[=]{
-						ofLog() << "move from a to b";
-						return b_id;
-					}
+					// the simplest action is only a StateIdType.
+					// the state will change and following behaviors are skipped.
+					b_id
 				},
 				// here is the second behavior.
 				{
 					[this]{return key_=='c';},
-					// if the action returned nothing (or anything that is not convertible to StateIdType)
-					// the action is executed but the state will not changes.
+					// an action can also be defined as a function.
+					// if the action returned nothing (or anything that is "not" convertible to StateIdType)
+					// the action is executed but the state will not change.
 					// so latter behaviors will run as usual.
 					[this]{
 						ofLog() << "tryed to move from a to c but it's not implemented";
@@ -59,19 +58,19 @@ void ofApp::setup(){
 					[this]{return key_=='c' || key_==OF_KEY_RIGHT;},
 					[]{
 						ofLog() << "move from b to c";
-						// "c" is not a string (it's actually const char[1])
-						// but it is convertible to StateIdType(std::string in this example) so you can do this to move to state "c".
+						// "c" is not a string (it's actually const char[2])
+						// but it is convertible to StateIdType(std::string in this example) so you can do this to change the state to "c".
 						return "c";
 					}
 				}
 			}
 		},
 		{
-			// state c
+			// state "c"
 			c_id,
 			{
 				{
-					// you can define behaviors by only action.
+					// you can define behaviors by only an action.
 					[=]{
 						if(key_=='a') {
 							ofLog() << "move from c to a";
@@ -81,14 +80,15 @@ void ofApp::setup(){
 							ofLog() << "move from c to b";
 							return b_id;
 						}
-						// return this special ID to stay in current state.
+						// return this special value to stay in current state.
 						return StateID<StateIdType>::NO_CHANGE();
 					}
 				},
 				{
 					// there are some pre-defined conditions (of course you can make your own)
+					// this will increment "key_" every frame and check it is more than 200 or not
 					Counter<int>(key_, 200),
-					[]{return "a";}
+					"a"
 				}
 			}
 		}

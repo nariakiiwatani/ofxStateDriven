@@ -40,10 +40,14 @@ public:
 	Behavior(const Behavior&)=default;
 	Behavior(Behavior&)=default;
 	Behavior(Behavior&&)=default;
-	template<typename Action>
+	template<typename Action, typename Ret = decltype(declval<Action>()())>
 	Behavior(std::function<bool()> condition, Action &&action)
 	:condition_(condition)
-	,action_(wrapper<decltype(declval<Action>()())>::wrap(action))
+	,action_(wrapper<Ret>::wrap(action))
+	{}
+	Behavior(std::function<bool()> condition, StateIdType next_id)
+	:condition_(condition)
+	,action_([next_id]{return next_id;})
 	{}
 	template<typename Action>
 	Behavior(Action &&action)

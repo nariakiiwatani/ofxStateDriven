@@ -16,22 +16,6 @@ struct StateID {
 	static constexpr value_type INVALID() { return value_type(); }
 };
 
-class Condition
-{
-public:
-	Condition(std::function<bool()> condition):condition_(condition){}
-	bool operator()() const { return condition_(); }
-	Condition operator&&(const Condition &c) {
-		Condition me(condition_);
-		return Condition([me,c](){return me()&&c();});
-	}
-	Condition operator||(const Condition &c) {
-		Condition me(condition_);
-		return Condition([me,c](){return me()||c();});
-	}
-protected:
-	std::function<bool()> condition_;
-};
 template<typename StateIdType>
 class Behavior
 {

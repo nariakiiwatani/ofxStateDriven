@@ -3,22 +3,36 @@
 #include "ofxStateDriven.h"
 
 namespace ofxStateDriven {
-template<typename CounterType>
-class Counter : public Condition
+class Condition
 {
 public:
-	Counter(CounterType &counter, CounterType limit)
+	Condition(std::function<bool()> condition):condition_(condition){}
+	bool operator()() const { return condition_(); }
+	Condition operator&&(const Condition &c) {
+		Condition me(condition_);
+		return Condition([me,c](){return me()&&c();});
+	}
+	Condition operator||(const Condition &c) {
+		Condition me(condition_);
+		return Condition([me,c](){return me()||c();});
+	}
+protected:
+	std::function<bool()> condition_;
+};
+template<typename CounterType>
+class CountUp : public Condition
+{
+public:
+	CountUp(CounterType &counter, CounterType limit)
 	:Condition([&counter,limit] {
 		return ++counter >= limit;
 	}){};
 };
 template<typename CounterType>
-using Increment = Counter<CounterType>;
-template<typename CounterType>
-class Decrement : public Condition
+class CountDown : public Condition
 {
 public:
-	Decrement(CounterType &counter, CounterType limit)
+	CountDown(CounterType &counter, CounterType limit)
 	:Condition([&counter,limit] {
 		return --counter <= limit;
 	}){};

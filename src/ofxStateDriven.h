@@ -24,14 +24,14 @@ public:
 	Behavior(const Behavior&)=default;
 	Behavior(Behavior&)=default;
 	Behavior(Behavior&&)=default;
-	template<typename Condition, typename Action, typename Ret = decltype(declval<Action>()())>
-	Behavior(Condition condition, Action &&action)
-	:condition_([condition]{return condition();})
+	template<typename Action, typename Ret = decltype(declval<Action>()())>
+	Behavior(std::function<bool()> condition, Action &&action)
+	:condition_(condition)
 	,action_(wrapper<Ret>::wrap(action))
 	{}
-	template<typename Condition>
-	Behavior(Condition condition, StateIdType next_id)
-	:Behavior(condition, [next_id]{return next_id;})
+	Behavior(std::function<bool()> condition, StateIdType next_id)
+	:condition_(condition)
+	,action_([next_id]{return next_id;})
 	{}
 	template<typename Action>
 	Behavior(Action &&action)

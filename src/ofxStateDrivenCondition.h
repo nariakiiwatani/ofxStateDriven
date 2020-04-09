@@ -6,7 +6,7 @@ namespace ofxStateDriven {
 class Condition
 {
 public:
-	Condition(std::function<bool()> condition):condition_(condition){}
+	Condition(std::function<bool()> condition=[]{return true;}):condition_(condition){}
 	bool operator()() const { return condition_(); }
 	Condition operator&&(const Condition &c) {
 		Condition me(condition_);
@@ -20,21 +20,20 @@ protected:
 	std::function<bool()> condition_;
 };
 template<typename CounterType>
-class CountUp : public Condition
+class Counter : public Condition
 {
 public:
-	CountUp(CounterType &counter, CounterType limit)
-	:Condition([&counter,limit] {
-		return ++counter >= limit;
-	}){};
-};
-template<typename CounterType>
-class CountDown : public Condition
-{
-public:
-	CountDown(CounterType &counter, CounterType limit)
-	:Condition([&counter,limit] {
-		return --counter <= limit;
-	}){};
+	template<typename StepType=CounterType>
+	Counter(CounterType limit, CounterType count_from=0, StepType step=1) {
+		auto counter = count_from;
+		condition_ = [=]() mutable {
+			counter += step;
+			if(step > 0 ? counter >= limit : counter <= limit) {
+				counter = count_from;
+				return true;
+			}
+			return false;
+		};
+	};
 };
 }

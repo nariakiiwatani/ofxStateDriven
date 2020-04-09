@@ -87,7 +87,7 @@ void ofApp::setup(){
 				{
 					// there are some pre-defined conditions (of course you can make your own)
 					// this will increment "key_" every frame and check it is more than 200 or not
-					CountUp<int>(key_, 200),
+					Counter<int>(100),
 					"a"
 				}
 			}
